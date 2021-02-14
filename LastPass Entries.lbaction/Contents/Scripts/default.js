@@ -28,12 +28,19 @@ function run(argument) {
         
         entriesList = entriesArray.map(
             function (entry) {
-                parts = entry.match(/(\(.*\))\/(.*)\[id: ([0-9]*)\] \[username: ([^]*)\]/)
+                parts = entry
+                    .substring(17) // remove date/timestamp
+                    .match(/^(.*?)\[id: ([0-9]*)\] \[username: (.*)\]/);
+
                 if (parts) {
+                    title = parts[1].match(/([^/]+)?$/)[1]; // this regex removes any LastPass categories in the title string, you could also keep them with just: parts[1];
+                    id = parts[2];
+                    userName = parts[3];
+
                     return {
-                        'title': parts[2] + '(' + (parts[4] || '?') + ')',
+                        'title': `${title}(${userName || "?"})`,
                         'action': 'getInfo',
-                        'actionArgument': parts[3],
+                        'actionArgument': id,
                         'actionReturnsItems': true
                     };
     
